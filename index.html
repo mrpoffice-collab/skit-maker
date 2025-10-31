@@ -62,10 +62,21 @@
                 <div class="controls">
                     <button id="back-btn" class="btn-secondary">← New Skit</button>
                     <button id="view-all-btn" class="btn-secondary active">View All</button>
+                    <button id="print-btn" class="btn-secondary">🖨️ Print</button>
+                </div>
+
+                <div id="share-info" class="share-info hidden">
+                    <h3>Share with Actors</h3>
+                    <p>Click a character button below, then use the "Share Link" or "Copy Script" button to send their part.</p>
                 </div>
 
                 <div id="character-selector" class="character-selector">
                     <!-- Character buttons will be added dynamically -->
+                </div>
+
+                <div id="character-actions" class="character-actions hidden">
+                    <button id="share-link-btn" class="btn-action">🔗 Share Link</button>
+                    <button id="copy-script-btn" class="btn-action">📋 Copy Script</button>
                 </div>
 
                 <div id="script-display">

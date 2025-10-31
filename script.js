@@ -9,9 +9,14 @@ const scriptSection = document.getElementById('script-section');
 const generateBtn = document.getElementById('generate-btn');
 const backBtn = document.getElementById('back-btn');
 const viewAllBtn = document.getElementById('view-all-btn');
+const printBtn = document.getElementById('print-btn');
 const loading = document.getElementById('loading');
 const characterSelector = document.getElementById('character-selector');
 const scriptDisplay = document.getElementById('script-display');
+const shareInfo = document.getElementById('share-info');
+const characterActions = document.getElementById('character-actions');
+const shareLinkBtn = document.getElementById('share-link-btn');
+const copyScriptBtn = document.getElementById('copy-script-btn');
 
 // Generate button handler
 generateBtn.addEventListener('click', async () => {
@@ -73,6 +78,61 @@ viewAllBtn.addEventListener('click', () => {
         btn.classList.remove('active');
     });
     viewAllBtn.classList.add('active');
+    characterActions.classList.add('hidden');
+
+    // Update URL
+    const url = new URL(window.location);
+    url.searchParams.delete('character');
+    window.history.pushState({}, '', url);
+});
+
+// Print button handler
+printBtn.addEventListener('click', () => {
+    window.print();
+});
+
+// Share Link button handler
+shareLinkBtn.addEventListener('click', () => {
+    if (!selectedCharacter) return;
+
+    const url = new URL(window.location);
+    url.searchParams.set('character', selectedCharacter.name);
+
+    // Copy to clipboard
+    navigator.clipboard.writeText(url.toString()).then(() => {
+        const originalText = shareLinkBtn.textContent;
+        shareLinkBtn.textContent = '✓ Link Copied!';
+        setTimeout(() => {
+            shareLinkBtn.textContent = originalText;
+        }, 2000);
+    }).catch(() => {
+        alert('Link: ' + url.toString());
+    });
+});
+
+// Copy Script button handler
+copyScriptBtn.addEventListener('click', () => {
+    if (!selectedCharacter || !currentScript) return;
+
+    let scriptText = currentScript.title ? `${currentScript.title}\n\n` : '';
+    scriptText += `Script for: ${selectedCharacter.name}\n`;
+    scriptText += '='.repeat(50) + '\n\n';
+
+    currentScript.lines.forEach(line => {
+        if (line.type === 'dialogue' && line.character.name === selectedCharacter.name) {
+            scriptText += `${line.character.name}: ${line.text}\n\n`;
+        }
+    });
+
+    navigator.clipboard.writeText(scriptText).then(() => {
+        const originalText = copyScriptBtn.textContent;
+        copyScriptBtn.textContent = '✓ Copied!';
+        setTimeout(() => {
+            copyScriptBtn.textContent = originalText;
+        }, 2000);
+    }).catch(() => {
+        alert('Could not copy to clipboard');
+    });
 });
 
 // Generate script using our serverless API
@@ -199,9 +259,27 @@ function displayScript() {
             document.querySelectorAll('.character-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             viewAllBtn.classList.remove('active');
+
+            // Show character actions
+            characterActions.classList.remove('hidden');
+            shareInfo.classList.remove('hidden');
+
+            // Update URL
+            const url = new URL(window.location);
+            url.searchParams.set('character', character.name);
+            window.history.pushState({}, '', url);
         });
         characterSelector.appendChild(btn);
     });
+
+    // Show/hide action buttons based on selection
+    if (selectedCharacter) {
+        characterActions.classList.remove('hidden');
+        shareInfo.classList.remove('hidden');
+    } else {
+        characterActions.classList.add('hidden');
+        shareInfo.classList.add('hidden');
+    }
 
     // Display script content
     let html = '';
@@ -236,3 +314,23 @@ function displayScript() {
 
     scriptDisplay.innerHTML = html;
 }
+
+// Check URL parameters on page load to auto-select character
+window.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const characterName = urlParams.get('character');
+
+    if (characterName && currentScript) {
+        const character = currentScript.characters.find(c => c.name === characterName);
+        if (character) {
+            selectedCharacter = character;
+            displayScript();
+
+            // Switch to script view
+            inputSection.classList.remove('active');
+            inputSection.classList.add('hidden');
+            scriptSection.classList.remove('hidden');
+            scriptSection.classList.add('active');
+        }
+    }
+});
