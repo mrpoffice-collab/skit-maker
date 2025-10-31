@@ -16,6 +16,7 @@ const scriptDisplay = document.getElementById('script-display');
 // Generate button handler
 generateBtn.addEventListener('click', async () => {
     const topic = document.getElementById('topic').value.trim();
+    const audience = document.getElementById('audience').value;
     const tone = document.getElementById('tone').value;
     const numPeople = parseInt(document.getElementById('num-people').value);
 
@@ -35,7 +36,7 @@ generateBtn.addEventListener('click', async () => {
     generateBtn.disabled = true;
 
     try {
-        const script = await generateScript(topic, tone, numPeople);
+        const script = await generateScript(topic, audience, tone, numPeople);
         currentScript = script;
         displayScript();
 
@@ -75,7 +76,7 @@ viewAllBtn.addEventListener('click', () => {
 });
 
 // Generate script using our serverless API
-async function generateScript(topic, tone, numPeople) {
+async function generateScript(topic, audience, tone, numPeople) {
     const response = await fetch('/api/generate', {
         method: 'POST',
         headers: {
@@ -83,6 +84,7 @@ async function generateScript(topic, tone, numPeople) {
         },
         body: JSON.stringify({
             topic,
+            audience,
             tone,
             numPeople
         })

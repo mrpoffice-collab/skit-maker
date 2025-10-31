@@ -19,11 +19,11 @@ export default async function handler(req, res) {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    const { topic, tone, numPeople } = req.body;
+    const { topic, audience, tone, numPeople } = req.body;
 
     // Validate input
-    if (!topic || !tone || !numPeople) {
-        return res.status(400).json({ error: 'Missing required fields: topic, tone, numPeople' });
+    if (!topic || !audience || !tone || !numPeople) {
+        return res.status(400).json({ error: 'Missing required fields: topic, audience, tone, numPeople' });
     }
 
     if (numPeople < 2 || numPeople > 10) {
@@ -37,15 +37,26 @@ export default async function handler(req, res) {
         return res.status(500).json({ error: 'Server configuration error: API key not set' });
     }
 
+    // Map audience to appropriate language and complexity
+    const audienceGuidance = {
+        'kids': 'young children (5-10 years old) - use simple vocabulary, short sentences, playful language, and fun concepts they can easily understand',
+        'preteens': 'preteens (11-13 years old) - use age-appropriate vocabulary, relatable situations, and themes relevant to middle school experiences',
+        'teens': 'teenagers (14-18 years old) - use contemporary language, address real-world challenges, and explore deeper themes relevant to high school experiences',
+        'adults': 'adults - use sophisticated vocabulary, mature themes, and deeper theological concepts',
+        'all-ages': 'a mixed audience of all ages - use clear language that children can understand but adults will also appreciate, with universal themes'
+    };
+
     const prompt = `Create a ${tone} skit or short play based on the Bible topic: "${topic}".
 
 The skit should:
+- Be designed for ${audienceGuidance[audience]}
 - Be for ${numPeople} people (create ${numPeople} distinct characters)
 - Have a ${tone} tone throughout
 - Be approximately 2-3 minutes when performed
 - Be appropriate for church or educational settings
 - Include stage directions in [brackets]
 - Be engaging and memorable
+- Match the vocabulary, humor, and complexity to the ${audience} audience level
 
 Format the script as follows:
 - Start with a title
