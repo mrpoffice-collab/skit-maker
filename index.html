@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bible Skit Maker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Bible Skit Maker</h1>
+            <p>Create custom skits from Bible stories</p>
+        </header>
+
+        <main id="main-content">
+            <!-- Input Form -->
+            <section id="input-section" class="active">
+                <div class="form-group">
+                    <label for="topic">Bible Verse, Book, or Theme:</label>
+                    <input type="text" id="topic" placeholder="e.g., Adam and Eve, John 3:16, The Good Samaritan">
+                    <small>Enter a Bible verse, book, or story theme</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="tone">Tone:</label>
+                    <select id="tone">
+                        <option value="humorous">Humorous</option>
+                        <option value="serious">Serious</option>
+                        <option value="sad">Sad</option>
+                        <option value="inspirational">Inspirational</option>
+                        <option value="dramatic">Dramatic</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="num-people">Number of People:</label>
+                    <input type="number" id="num-people" min="2" max="10" value="3">
+                    <small>2-10 people</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="api-key">Claude API Key:</label>
+                    <input type="password" id="api-key" placeholder="sk-ant-...">
+                    <small>Your API key is stored locally and never sent to any server except Anthropic</small>
+                </div>
+
+                <button id="generate-btn" class="btn-primary">Generate Skit</button>
+                <div id="loading" class="loading hidden">
+                    <div class="spinner"></div>
+                    <p>Generating your skit...</p>
+                </div>
+            </section>
+
+            <!-- Script Display -->
+            <section id="script-section" class="hidden">
+                <div class="controls">
+                    <button id="back-btn" class="btn-secondary">← New Skit</button>
+                    <button id="view-all-btn" class="btn-secondary active">View All</button>
+                </div>
+
+                <div id="character-selector" class="character-selector">
+                    <!-- Character buttons will be added dynamically -->
+                </div>
+
+                <div id="script-display">
+                    <!-- Script content will be added dynamically -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
