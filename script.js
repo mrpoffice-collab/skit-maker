@@ -18,11 +18,31 @@ const characterActions = document.getElementById('character-actions');
 const shareLinkBtn = document.getElementById('share-link-btn');
 const copyScriptBtn = document.getElementById('copy-script-btn');
 
+// Show/hide comedy level based on tone
+const toneSelect = document.getElementById('tone');
+const comedyLevelGroup = document.getElementById('comedy-level-group');
+
+toneSelect.addEventListener('change', () => {
+    if (toneSelect.value === 'humorous') {
+        comedyLevelGroup.style.display = 'block';
+    } else {
+        comedyLevelGroup.style.display = 'none';
+    }
+});
+
+// Initial state
+if (toneSelect.value === 'humorous') {
+    comedyLevelGroup.style.display = 'block';
+} else {
+    comedyLevelGroup.style.display = 'none';
+}
+
 // Generate button handler
 generateBtn.addEventListener('click', async () => {
     const topic = document.getElementById('topic').value.trim();
     const audience = document.getElementById('audience').value;
     const tone = document.getElementById('tone').value;
+    const comedyLevel = document.getElementById('comedy-level').value;
     const numPeople = parseInt(document.getElementById('num-people').value);
 
     // Validation
@@ -41,7 +61,7 @@ generateBtn.addEventListener('click', async () => {
     generateBtn.disabled = true;
 
     try {
-        const script = await generateScript(topic, audience, tone, numPeople);
+        const script = await generateScript(topic, audience, tone, comedyLevel, numPeople);
         currentScript = script;
         displayScript();
 
@@ -136,7 +156,7 @@ copyScriptBtn.addEventListener('click', () => {
 });
 
 // Generate script using our serverless API
-async function generateScript(topic, audience, tone, numPeople) {
+async function generateScript(topic, audience, tone, comedyLevel, numPeople) {
     const response = await fetch('/api/generate', {
         method: 'POST',
         headers: {
@@ -146,6 +166,7 @@ async function generateScript(topic, audience, tone, numPeople) {
             topic,
             audience,
             tone,
+            comedyLevel,
             numPeople
         })
     });

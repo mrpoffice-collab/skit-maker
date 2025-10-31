@@ -19,7 +19,7 @@ export default async function handler(req, res) {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    const { topic, audience, tone, numPeople } = req.body;
+    const { topic, audience, tone, comedyLevel, numPeople } = req.body;
 
     // Validate input
     if (!topic || !audience || !tone || !numPeople) {
@@ -46,7 +46,23 @@ export default async function handler(req, res) {
         'all-ages': 'a mixed audience of all ages - use clear language that children can understand but adults will also appreciate, with universal themes'
     };
 
+    // Map comedy level to specific instructions
+    const comedyGuidance = {
+        'normal': '',
+        'funny': 'Include clever wordplay, light humor, and a few good jokes.',
+        'very-funny': 'Pack it with jokes, puns, funny observations, and comedic misunderstandings. Make the audience laugh frequently!',
+        'hilarious': 'Go ALL OUT with comedy! Include rapid-fire jokes, slapstick moments, exaggerated reactions, running gags, perfect comedic timing, unexpected punchlines, and physical comedy opportunities. Make it absolutely hilarious!',
+        'super-hilarious': 'MAXIMUM COMEDY MODE! This should be SIDE-SPLITTINGLY FUNNY! Include: outrageous puns, absurd situations, breaking the fourth wall, self-aware humor, meta jokes, ridiculous sound effects in stage directions, over-the-top character reactions, comedic callbacks, mistimed entrances, props being used wrong, characters finishing each other\'s sentences incorrectly, deadpan delivery moments, dramatic pauses for comedic effect, and unexpected plot twists that are funny. Every line should aim for a laugh. Make the audience cry from laughing so hard! Think SNL meets Monty Python meets improv comedy!'
+    };
+
+    let comedyInstruction = '';
+    if (tone === 'humorous' && comedyLevel && comedyGuidance[comedyLevel]) {
+        comedyInstruction = comedyGuidance[comedyLevel];
+    }
+
     const prompt = `Create a ${tone} skit or short play based on the Bible topic: "${topic}".
+
+${comedyInstruction ? `COMEDY INSTRUCTIONS: ${comedyInstruction}\n` : ''}
 
 The skit should:
 - Be designed for ${audienceGuidance[audience]}
