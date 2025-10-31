@@ -13,33 +13,15 @@ const loading = document.getElementById('loading');
 const characterSelector = document.getElementById('character-selector');
 const scriptDisplay = document.getElementById('script-display');
 
-// Load API key from localStorage
-const apiKeyInput = document.getElementById('api-key');
-const savedApiKey = localStorage.getItem('claudeApiKey');
-if (savedApiKey) {
-    apiKeyInput.value = savedApiKey;
-}
-
-// Save API key to localStorage when changed
-apiKeyInput.addEventListener('change', () => {
-    localStorage.setItem('claudeApiKey', apiKeyInput.value);
-});
-
 // Generate button handler
 generateBtn.addEventListener('click', async () => {
     const topic = document.getElementById('topic').value.trim();
     const tone = document.getElementById('tone').value;
     const numPeople = parseInt(document.getElementById('num-people').value);
-    const apiKey = apiKeyInput.value.trim();
 
     // Validation
     if (!topic) {
         alert('Please enter a Bible verse, book, or theme');
-        return;
-    }
-
-    if (!apiKey) {
-        alert('Please enter your Claude API key');
         return;
     }
 
@@ -53,7 +35,7 @@ generateBtn.addEventListener('click', async () => {
     generateBtn.disabled = true;
 
     try {
-        const script = await generateScript(topic, tone, numPeople, apiKey);
+        const script = await generateScript(topic, tone, numPeople);
         currentScript = script;
         displayScript();
 
@@ -92,68 +74,27 @@ viewAllBtn.addEventListener('click', () => {
     viewAllBtn.classList.add('active');
 });
 
-// Generate script using Claude API
-async function generateScript(topic, tone, numPeople, apiKey) {
-    const prompt = `Create a ${tone} skit or short play based on the Bible topic: "${topic}".
-
-The skit should:
-- Be for ${numPeople} people (create ${numPeople} distinct characters)
-- Have a ${tone} tone throughout
-- Be approximately 2-3 minutes when performed
-- Be appropriate for church or educational settings
-- Include stage directions in [brackets]
-- Be engaging and memorable
-
-Format the script as follows:
-- Start with a title
-- List each character (e.g., "Character 1: [role description]")
-- Write the script with character names in CAPS followed by their lines
-- Include stage directions in [brackets]
-- You may include a NARRATOR if needed
-
-Example format:
-TITLE: [Your Title Here]
-
-CHARACTERS:
-Character 1: [Role]
-Character 2: [Role]
-
----
-
-[Stage direction]
-
-CHARACTER 1: Dialogue here.
-
-CHARACTER 2: Response here.
-
-[Stage direction]
-
-Please write the complete skit now.`;
-
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+// Generate script using our serverless API
+async function generateScript(topic, tone, numPeople) {
+    const response = await fetch('/api/generate', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': apiKey,
-            'anthropic-version': '2023-06-01'
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            model: 'claude-3-5-sonnet-20241022',
-            max_tokens: 4000,
-            messages: [{
-                role: 'user',
-                content: prompt
-            }]
+            topic,
+            tone,
+            numPeople
         })
     });
 
     if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error?.message || 'Failed to generate script');
+        throw new Error(error.error || 'Failed to generate script');
     }
 
     const data = await response.json();
-    return parseScript(data.content[0].text);
+    return parseScript(data.script);
 }
 
 // Parse the script from Claude's response

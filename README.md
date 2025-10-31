@@ -13,33 +13,50 @@ A web app that generates custom Bible-based skits using AI. Perfect for church g
 
 ## How to Use
 
-1. Visit the app at [your-vercel-url]
-2. Get a Claude API key from [Anthropic Console](https://console.anthropic.com/)
-3. Enter your desired Bible topic (e.g., "Adam and Eve", "The Good Samaritan")
-4. Select the tone and number of actors
-5. Enter your API key and generate the skit
-6. Share the URL with your cast members
-7. Each person can click their character name to see their lines highlighted
+1. Visit the deployed app
+2. Enter your desired Bible topic (e.g., "Adam and Eve", "The Good Samaritan")
+3. Select the tone and number of actors
+4. Click "Generate Skit" and wait for AI to create your script
+5. Share the URL with your cast members
+6. Each person can click their character name to see their lines highlighted
 
 ## Tech Stack
 
-- HTML/CSS/JavaScript
+- HTML/CSS/JavaScript (Frontend)
+- Vercel Serverless Functions (Backend API)
 - Claude AI API (Anthropic)
 - Deployed on Vercel
 
-## Privacy
+## Deployment to Vercel
 
-Your API key is stored locally in your browser and is only sent directly to Anthropic's API. It is never stored on any server.
+### Initial Setup
+
+1. Fork or clone this repository to your GitHub account
+2. Go to [Vercel](https://vercel.com) and sign in with GitHub
+3. Click "Add New Project" and import your repository
+4. Add environment variable:
+   - Key: `CLAUDE_API_KEY`
+   - Value: Your Claude API key from [Anthropic Console](https://console.anthropic.com/)
+5. Click "Deploy"
+
+### Updating
+
+Push changes to your main branch and Vercel will automatically redeploy.
 
 ## Local Development
 
 1. Clone the repository
-2. Open `index.html` in a web browser
-3. No build process required - it's pure HTML/CSS/JS!
+2. Create a `.env` file (copy from `.env.example`)
+3. Add your Claude API key to `.env`
+4. Install Vercel CLI: `npm i -g vercel`
+5. Run `vercel dev` to start local development server
+6. Open `http://localhost:3000` in your browser
 
-## Deployment
+## Environment Variables
 
-This app is deployed on Vercel and automatically updates from the main branch.
+Required environment variable for deployment:
+
+- `CLAUDE_API_KEY`: Your Anthropic Claude API key
 
 ## License
 
